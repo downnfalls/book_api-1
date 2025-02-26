@@ -2,20 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
-# from flask_basicauth import BasicAuth
 
 # MongoDB Connection URI (replace with your credentials securely)
-uri = "mongodb+srv://<db_username>:<db_password>@cluster0.b2qav.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+uri = "mongodb+srv://<username>:<password>@cluster0.b2qav.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Connect to MongoDB
 client = MongoClient(uri)
 db = client["book"]
 collection = db["books"]
-
-# app.config['BASIC_AUTH_USERNAME'] = 'username'
-# app.config['BASIC_AUTH_PASSWORD'] = 'password'
-# basic_auth = BasicAuth(app)
-
 
 app = Flask(__name__)
 CORS(app)
@@ -36,7 +30,7 @@ def create_book():
     }
 
     inserted = collection.insert_one(new_book)
-    new_book["_id"] = str(inserted.inserted_id)  # Convert ObjectId to string
+    new_book["_id"] = str(inserted.inserted_id)  
     return jsonify(new_book), 201
 
 # Read (GET) operation - Get all books
@@ -44,7 +38,7 @@ def create_book():
 def get_all_books():
     books = list(collection.find({}, {"_id": 1, "title": 1, "author": 1, "image_url": 1}))
     for book in books:
-        book["_id"] = str(book["_id"])  # Convert ObjectId to string
+        book["_id"] = str(book["_id"])  
     return jsonify({"books": books})
 
 # Read (GET) operation - Get a specific book by ID
@@ -52,7 +46,7 @@ def get_all_books():
 def get_book(book_id):
     book = collection.find_one({"_id": ObjectId(book_id)})
     if book:
-        book["_id"] = str(book["_id"])  # Convert ObjectId to string
+        book["_id"] = str(book["_id"])  
         return jsonify(book)
     else:
         return jsonify({"error": "Book not found"}), 404
@@ -82,7 +76,7 @@ def delete_book(book_id):
 def check_password():
     data = request.get_json()
     password = data.get('password')
-    correct_password = "1234"  # correct_password
+    correct_password = "2147483647"
 
     if password == correct_password:
         return jsonify({"isValid": True})
